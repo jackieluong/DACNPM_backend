@@ -1,2 +1,0 @@
-# LanguageCenter_backend
-DA_CNPM_BACKEND
