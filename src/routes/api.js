@@ -1,5 +1,6 @@
 const express = require("express");
-const { getAllCourses, createNewCourse } = require("../controllers/courseController");
+
+const { getAllProducts, createNewProduct } = require("../controllers/productController");
 
 
 
@@ -19,8 +20,8 @@ const router = express.Router();
 // };
 
 const initAPIRoutes = (app) => {
-  router.get("/course", getAllCourses);
-  router.post('/course/create', createNewCourse);
+  router.get("/product", getAllProducts);
+  router.post('/product/create',createNewProduct);
 
   // router.post("/create-user", createNewUser);
 

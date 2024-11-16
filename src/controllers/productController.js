@@ -2,10 +2,10 @@ const connection = require("../config/database");
 
 
 
-let getAllCourses = async (req, res) => {
+let getAllProducts = async (req, res) => {
     try {
         // Execute the query to fetch all courses
-        const [results, fields] = await connection.execute("SELECT * FROM course");
+        const [results, fields] = await connection.execute("SELECT * FROM product");
 
         // Respond with the fetched courses
         return res.status(200).json({
@@ -14,17 +14,17 @@ let getAllCourses = async (req, res) => {
         });
     } catch (error) {
         // Handle errors if the query fails
-        console.error("Error fetching courses:", error.message);
+        console.error("Error fetching product:", error.message);
         return res.status(500).json({
-            message: 'Error fetching courses',
+            message: 'Error fetching product',
             error: error.message
         });
     }
 };
 
-let createNewCourse = async (req, res) => {
+let createNewProduct = async (req, res) => {
     try {
-        let { id, name, fee, description, status } = req.body;
+        let { id, name, price, color, brand, description, size, quantity, category } = req.body;
 
         
         if (!name || !fee || !description || !status) {
@@ -35,26 +35,26 @@ let createNewCourse = async (req, res) => {
 
         // Execute the query to insert a new course
         const [results, fields] = await connection.execute(
-            `INSERT INTO Course(ID, Name, Fee, Description, Status) VALUES (?, ?, ?, ?, ?)`,
-            [id, name, fee, description, status]
+            `INSERT INTO product(product_id, name_, price, color, brand, description_,size_, quantity, category) VALUES (?, ?, ?, ?, ?)`,
+            [id, name, price, color, brand, description, size, quantity, category]
         );
 
         // Respond with a success message
         return res.status(201).json({
-            message: 'Course created successfully',
-            newCourseID: id
+            message: 'Product created successfully',
+            newProductID: id
         });
     } catch (error) {
         // Handle errors if the query fails
-        console.error("Error creating course:", error.message);
+        console.error("Error creating product:", error.message);
         return res.status(500).json({
-            message: 'Error creating course',
+            message: 'Error creating product',
             error: error.message
         });
     }
 };
 
 module.exports = {
-    getAllCourses,
-    createNewCourse
+    getAllProducts,
+    createNewProduct,
 };

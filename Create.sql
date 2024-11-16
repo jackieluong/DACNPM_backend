@@ -19,7 +19,6 @@ CREATE table  assign_db.product(
     color varchar(255) NOT NULL,
     brand varchar(255) NOT NULL,
     description_ text NOT NULL,
-    weight_ int NOT NULL,
     size_ int NOT NULL,
     quantity int NOT NULL,
     category enum ('Shoes', 'Stocks','Sneaker')
