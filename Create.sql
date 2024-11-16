@@ -1,179 +1,146 @@
+CREATE SCHEMA `assign_db` ;
 
-create schema da_cnpm  --Name of the database, using mysql
--- Table: Person
-CREATE TABLE Person (
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    Name VARCHAR(100),
-    Birthday DATETIME,
-    Phone_number VARCHAR(10),
-    Address VARCHAR(100),
-    Gender VARCHAR(5),
-    Email VARCHAR(50)
+
+CREATE table  assign_db.user(
+	user_id int  NOT NULL AUTO_INCREMENT primary key,
+    name_ varchar(255) NOT NULL,
+    password_ varchar(255) NOT NULL,
+    username varchar(255) NOT NULL unique,
+    role_ ENUM('customer', 'manager') NOT NULL,
+    gender char(1) NOT NULL,
+    birthday DATE NOT NULL,
+    email varchar(255) NOT NULL unique
 );
 
--- Table: Employee
-CREATE TABLE Employee (
-    ID INT PRIMARY KEY,
-    Start_date DATETIME,
-    Type VARCHAR(50),
-    FOREIGN KEY (ID) REFERENCES Person(ID) ON DELETE CASCADE
-);
-
--- Table: Teacher
-CREATE TABLE Teacher (
-    ID INT PRIMARY KEY,
-    Certificate VARCHAR(50),
-    Start_date DATETIME,
-    FOREIGN KEY (ID) REFERENCES Person(ID) ON DELETE CASCADE
-);
-
--- Table: Student
-CREATE TABLE Student (
-    ID INT PRIMARY KEY,
-    FOREIGN KEY (ID) REFERENCES Person(ID) ON DELETE CASCADE
-);
-
--- Table: Course
-CREATE TABLE Course (
-    ID VARCHAR(5) PRIMARY KEY,
-    Name VARCHAR(50),
-    Fee INT,
-    Description VARCHAR(100),
-    Status VARCHAR(50)
---     ID_employee INT,
---     FOREIGN KEY (ID_employee) REFERENCES Employee(ID) ON DELETE SET NULL
-);
-
--- Table: Register
-CREATE TABLE Register (
-    ID_student INT,
-    ID_course VARCHAR(5),
-    PRIMARY KEY (ID_student, ID_course),
-    FOREIGN KEY (ID_student) REFERENCES Student(ID) ON DELETE CASCADE,
-    FOREIGN KEY (ID_course) REFERENCES Course(ID) ON DELETE CASCADE
-);
-
--- Table: Class
-CREATE TABLE Class (
-    ID VARCHAR(5) PRIMARY KEY,
-    Place VARCHAR(100),
-    Start_date DATE,
-    End_date DATE,
-    Study_time TIME,
-    Duration INT, -- minute
-    ID_course VARCHAR(5),
-    ID_teacher INT,
-    
-    FOREIGN KEY (ID_course) REFERENCES Course(ID) ON DELETE SET NULL,
-    FOREIGN KEY (ID_teacher) REFERENCES Teacher(ID) ON DELETE SET NULL
-);
-
--- Table: ClassDocument
-CREATE TABLE ClassDocument (
-    ID INT PRIMARY KEY AUTO_INCREMENT, -- Unique identifier for each document
-    ClassID VARCHAR(5) NOT NULL,       -- Links the document to a specific class
-    DocumentName VARCHAR(255) NOT NULL, -- Name of the document (e.g., syllabus.pdf)
-    DocumentPath VARCHAR(500) NOT NULL, -- Path to the document storage (e.g., file location)
-    UploadedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp of when the document was uploaded
-    FOREIGN KEY (ClassID) REFERENCES Class(ID) ON DELETE CASCADE -- Ensures documents are deleted when the class is removed
-);
-
--- Table: Has
-CREATE TABLE Has (
-    ID_student INT NOT NULL,
-    ID_class VARCHAR(5) NOT NULL,
-    Grade VARCHAR(5), -- Stores the student's grade for the class
-    PRIMARY KEY (ID_student, ID_class),
-    FOREIGN KEY (ID_student) REFERENCES Student(ID) ON DELETE CASCADE,
-    FOREIGN KEY (ID_class) REFERENCES Class(ID) ON DELETE CASCADE
-);
-
--- Table: Receipt
--- CREATE TABLE Receipt (
---     ID VARCHAR(10) PRIMARY KEY,
---     Create_at DATETIME,
---     Fee INT,
---     Description VARCHAR(100),
---     Payment_date DATETIME,
---     ID_student INT,
---     FOREIGN KEY (ID_student) REFERENCES Student(ID) ON DELETE SET NULL
--- );
-
--- Table: Notify
-CREATE TABLE Notify (
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    ID_employee INT,
-    ID_teacher INT,
-    ID_student INT,
-    Date TIMESTAMP,
-    Content VARCHAR(100),
-    FOREIGN KEY (ID_employee) REFERENCES Employee(ID) ON DELETE SET NULL,
-    FOREIGN KEY (ID_teacher) REFERENCES Teacher(ID) ON DELETE SET NULL,
-    FOREIGN KEY (ID_student) REFERENCES Student(ID) ON DELETE SET NULL
+CREATE table  assign_db.product(
+	product_id int  NOT NULL AUTO_INCREMENT primary key,
+    name_ varchar(255) NOT NULL,
+    price int NOT NULL,
+    color varchar(255) NOT NULL,
+    brand varchar(255) NOT NULL,
+    description_ text NOT NULL,
+    weight_ int NOT NULL,
+    size_ int NOT NULL,
+    quantity int NOT NULL,
+    category enum ('Shoes', 'Stocks','Sneaker')
 );
 
 
--- Insert data into Person table
-INSERT INTO Person (ID, Name, Birthday, Phone_number, Address, Gender, Email)
-VALUES
-(1,'John Doe', '1990-05-12 08:30:00', '1234567890', '123 Main St, City', 'Male', 'john.doe@example.com'),
-(2,'Jane Smith', '1985-09-23 10:15:00', '0987654321', '456 Oak Ave, City', 'Female', 'jane.smith@example.com'),
-(3,'Michael Johnson', '2000-02-10 14:45:00', '1122334455', '789 Pine Rd, City', 'Male', 'michael.johnson@example.com');
+CREATE table  assign_db.collection_(
+    collection_id int  NOT NULL AUTO_INCREMENT primary key,
+    name_ varchar(255) NOT NULL
+);
 
--- Insert data into Employee table
-INSERT INTO Employee (ID, Start_date, Type)
-VALUES
-(1, '2020-01-15 09:00:00', 'Full-time'),
-(2, '2021-07-01 10:30:00', 'Part-time');
 
--- Insert data into Teacher table
-INSERT INTO Teacher (ID, Certificate, Start_date)
-VALUES
-(4, 'Mathematics Degree', '2020-09-01 08:00:00'),
-(5, 'English Literature Degree', '2021-02-10 09:30:00');
+CREATE table  assign_db.compriesof(
+    collection_id int  NOT NULL ,
+    product_id int  NOT NULL  ,
+    FOREIGN KEY (collection_id) references collection_(collection_id) On update restrict on delete restrict,
+    FOREIGN KEY (product_id) references product(product_id) On update restrict on delete restrict,
+    CONSTRAINT pk_create PRIMARY KEY (collection_id, product_id)
 
--- Insert data into Student table
-INSERT INTO Student (ID)
-VALUES
-(1),
-(2),
-(3);
+);
 
--- Insert data into Course table
-INSERT INTO Course (ID, Name, Fee, Description, Status)
-VALUES
-('C001', 'Mathematics 101', 500, 'Basic Mathematics course', 'Active'),
-('C002', 'English 101', 400, 'Introduction to English literature', 'Active');
 
--- Insert data into Register table
-INSERT INTO Register (ID_student, ID_course)
-VALUES
-(1, 'C001'),
-(2, 'C002'),
-(3, 'C001');
 
--- Insert data into Class table
-INSERT INTO Class (ID, Place, Start_date, End_date, Study_time,Duration, ID_course, ID_teacher)
-VALUES
-('CL001', 'Room 101', '2024-01-10', '2024-01-10', '18:00:00',3, 'C001', 4),
-('CL002', 'Room 102', '2024-02-15', '2024-02-15', '18:00:00', 3, 'C002', 5);
+create table  assign_db.order_(
+	order_id int NOT NULL primary key auto_increment,
+    order_time datetime NOT NULL,
+    shipment_time datetime ,
+    ship_fee double not null,
+    payment_status ENUM('Completed', 'Not Completed', 'Cancelled') not null,
+    payment_method varchar(255) not null,
+    payment_time datetime,
+    status_ ENUM('Completed', 'Shipping', 'Cancelled') not null,
+    address_ varchar(255) not null,
+    user_id int not null,
+    FOREIGN KEY (user_id) references user(user_id) On update restrict on delete restrict
+);
 
--- Insert data into ClassDocument table
-INSERT INTO ClassDocument (ClassID, DocumentName, DocumentPath)
-VALUES
-('CL001', 'Math Syllabus', '/documents/math_syllabus.pdf'),
-('CL002', 'English Syllabus', '/documents/english_syllabus.pdf');
+create table  assign_db.promotion_code(
+	code_id int NOT NULL primary key,
+    name_ varchar(255) NOT NULL,
+    start_date datetime NOT NULL, 
+    end_date datetime NOT NULL,
+    min_order int NOT NULL,
+    maximum_promo int NOT NULL,
+    promo_value double NOT NULL,
+    init_quantity int NOT NULL
+);
 
--- Insert data into Has table
-INSERT INTO Has (ID_student, ID_class, Grade)
-VALUES
-(1, 'CL001', 'A'),
-(2, 'CL002', 'B'),
-(3, 'CL001', 'A');
+create table  assign_db.cart(
+	cart_id int NOT NULL primary key
+   
+);
 
--- Insert data into Notify table
-INSERT INTO Notify (ID_employee, ID_teacher, ID_student, Date, Content)
-VALUES
-(1, 1, 1, '2024-01-01 10:00:00', 'Course registration reminder'),
-(2, 2, 2, '2024-01-05 11:00:00', 'Class update notification');
+create table assign_db.create_(
+	cart_id int not NULL,
+    user_id int not NULL,
+    foreign key (user_id) references user(user_id) On update restrict on delete restrict,
+    foreign key (cart_id) references cart(cart_id) On update cascade on delete cascade,
+    CONSTRAINT pk_create PRIMARY KEY (cart_id, user_id)
+);
 
+create table  assign_db.make(
+	order_id int not NULL primary key,
+    user_id int not NULL,
+    foreign key (user_id) references user(user_id) On update restrict on delete restrict,
+    foreign key (order_id) references order_(order_id) On update cascade on delete cascade
+);
+
+create table  assign_db.apply_for(
+	order_id int not NULL primary key,
+    promotion_code_id int not NULL,
+    foreign key (order_id) references order_(order_id) On update cascade on delete cascade,
+    foreign key (promotion_code_id) references promotion_code(code_id) On update restrict on delete restrict
+);
+
+create table  assign_db.contain(
+	order_id int not NULL,
+    product_id int not NULL,
+    quantity int not NULL,
+    foreign key (order_id) references order_(order_id) On update cascade on delete cascade,
+    foreign key (product_id) references product(product_id) On update restrict on delete restrict,
+    CONSTRAINT pk_contain PRIMARY KEY (order_id, product_id)
+);
+
+create table  assign_db.consisted(
+	cart_id int not NULL ,
+    product_id int not NULL,
+    quantity int not NULL,
+    foreign key (product_id) references product(product_id) On update cascade on delete cascade,
+    foreign key (cart_id) references cart(cart_id) On update restrict on delete restrict,
+	 CONSTRAINT pk_consisted PRIMARY KEY (cart_id, product_id)
+);
+
+
+
+CREATE table  assign_db.rate(
+	user_id int  NOT NULL,
+    product_id int NOT NULL,
+    score int NOT NULL,
+    CONSTRAINT pk_rate PRIMARY KEY (user_id, product_id),
+    foreign key (user_id) references user(user_id) On update restrict on delete restrict,
+    foreign key (product_id) references product (product_id) On update restrict on delete restrict
+);
+
+
+CREATE table  assign_db.own (
+	user_id int  NOT NULL,
+    promotion_code_id int NOT NULL,
+    CONSTRAINT pk_own PRIMARY KEY (user_id, promotion_code_id),
+    foreign key (user_id) references user (user_id) On update restrict on delete restrict,
+    foreign key (promotion_code_id) references promotion_code (code_id) On update restrict on delete restrict
+);
+
+
+Create table assign_db.review(
+	product_id int NOT NULL,
+    ordinal_number int NOT NULL,
+    content varchar(255) not null,
+    time_ datetime not null,
+    reviewer_id  int not null,
+    constraint pk_review Primary key (product_id, ordinal_number),
+	foreign key (product_id) references product (product_id) On update cascade on delete cascade,
+    foreign key (reviewer_id) references user(user_id) On update restrict on delete restrict
+);
