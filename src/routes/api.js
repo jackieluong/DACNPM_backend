@@ -20,7 +20,7 @@ const router = express.Router();
 // };
 
 const initAPIRoutes = (app) => {
-  router.get("/product", getAllProducts);
+  router.get("/product?query=?&dq=?", getAllProducts);
   router.post('/product/create',createNewProduct);
 
   // router.post("/create-user", createNewUser);
@@ -29,6 +29,7 @@ const initAPIRoutes = (app) => {
 
   // router.delete("/delete-user/:id", deleteUser);
 
+  
   return app.use("/api/v1/", router);
 };
 
