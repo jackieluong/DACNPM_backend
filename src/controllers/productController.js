@@ -5,7 +5,7 @@ const connection = require("../config/database");
 let getAllProducts = async (req, res) => {
     try {
         // Execute the query to fetch all courses
-        const [results, fields] = await connection.execute("SELECT * FROM product");
+        const [results, fields] = await connection.execute("SELECT * FROM Product");
 
         // Respond with the fetched courses
         return res.status(200).json({
@@ -24,10 +24,10 @@ let getAllProducts = async (req, res) => {
 
 let createNewProduct = async (req, res) => {
     try {
-        let { id, name, price, color, brand, description, size, quantity, category } = req.body;
+        let { name, price,brand, description, quantity, category, imgUrl } = req.body;
 
         
-        if (!name || !fee || !description || !status) {
+        if (!name || !description || !quantity || !category) {
             return res.status(400).json({
                 message: 'Missing required params'
             });
@@ -35,10 +35,11 @@ let createNewProduct = async (req, res) => {
 
         // Execute the query to insert a new course
         const [results, fields] = await connection.execute(
-            `INSERT INTO product(product_id, name_, price, color, brand, description_,size_, quantity, category) VALUES (?, ?, ?, ?, ?)`,
-            [id, name, price, color, brand, description, size, quantity, category]
+            `INSERT INTO Product( name, price, brand, description, quantity, category, imgUrl) VALUES ( ?, ?, ?, ?, ?, ?, ?)`,
+            [name, price,brand, description, quantity, category, imgUrl]
         );
 
+        const id = results.insertId;
         // Respond with a success message
         return res.status(201).json({
             message: 'Product created successfully',
@@ -54,7 +55,69 @@ let createNewProduct = async (req, res) => {
     }
 };
 
+let updateProduct = async (req, res) => {
+    try {
+        let { id } = req.params;
+        let { name, price,brand, description, quantity, category, imgUrl } = req.body;
+
+        console.log(req.body);
+        console.log(id);
+        if (!id) {
+            return res.status(400).json({
+                message: 'Missing required params'
+            });
+        }
+
+        // Execute the query to update the course
+        const [results, fields] = await connection.execute(
+            `UPDATE Product SET name = ?, price = ?, brand = ?, description = ?, quantity = ?, category = ?, imgUrl = ? WHERE product_id = ?`,
+            [name, price,brand, description, quantity, category, imgUrl, id]
+        );
+
+        // Respond with a success message
+        return res.status(200).json({
+            message: 'Product updated successfully'
+        });
+    } catch (error) {
+        // Handle errors if the query fails
+        console.error("Error updating product:", error.message);
+        return res.status(500).json({
+            message: 'Error updating product',
+            error: error.message
+        });
+    }
+};
+let deleteProduct = async (req, res) => {
+    try {
+        let { id } = req.params;
+        if (!id) {
+            return res.status(400).json({
+                message: 'Missing required params'
+            });
+        }
+
+        // Execute the query to delete the course
+        const [results, fields] = await connection.execute(
+            `DELETE FROM Product WHERE product_id = ?`,
+            [id]
+        );
+
+        // Respond with a success message
+        return res.status(200).json({
+            message: 'Product deleted successfully'
+        });
+    } catch (error) {
+        // Handle errors if the query fails
+        console.error("Error deleting product:", error.message);
+        return res.status(500).json({
+            message: 'Error deleting product',
+            error: error.message
+        });
+    }
+};
 module.exports = {
     getAllProducts,
     createNewProduct,
+    deleteProduct,
+    updateProduct,
 };

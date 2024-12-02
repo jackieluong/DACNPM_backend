@@ -4,12 +4,14 @@ require("dotenv").config();
 const configViewEngine = require("./config/viewEngine");
 const connection = require("./config/database");
 const initAPIRoutes = require("./routes/api");
-
+const cors = require("cors");
 
 
 // Create the connection to database
 
 const app = express();
+app.use(cors());
+
 const port = process.env.PORT || 3000;
 const hostname = process.env.HOST_NAME;
 
