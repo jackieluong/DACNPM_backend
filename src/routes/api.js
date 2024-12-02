@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { getAllProducts, createNewProduct } = require("../controllers/productController");
+const { getAllProducts, createNewProduct, deleteProduct, updateProduct } = require("../controllers/productController");
 
 
 
@@ -20,9 +20,10 @@ const router = express.Router();
 // };
 
 const initAPIRoutes = (app) => {
-  router.get("/product?query=?&dq=?", getAllProducts);
+  router.get("/product", getAllProducts);
   router.post('/product/create',createNewProduct);
-
+  router.delete('/product/:id',deleteProduct)
+  router.put('/product/edit/:id',updateProduct);
   // router.post("/create-user", createNewUser);
 
   // router.put("/update-user/:id", updateUser);

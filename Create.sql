@@ -19,7 +19,8 @@ CREATE TABLE Product (
     brand VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL,
     quantity INT NOT NULL,
-    category ENUM('Phone', 'Tablet', 'Laptop', 'Accessories') NOT NULL
+    category ENUM('Phone', 'Tablet', 'Laptop', 'Accessories') NOT NULL,
+    imgUrl TEXT
 )
 
 CREATE TABLE `Order`(
