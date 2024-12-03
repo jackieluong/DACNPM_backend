@@ -3,6 +3,7 @@ const express = require("express");
 const { getAllProducts, createNewProduct, deleteProduct, updateProduct } = require("../controllers/productController");
 
 
+const {getAllUsers, createNewUser, updateUser, deleteUser} = require("../controllers/userController");
 
 const router = express.Router();
 
@@ -30,7 +31,11 @@ const initAPIRoutes = (app) => {
 
   // router.delete("/delete-user/:id", deleteUser);
 
-  
+  router.get("/users", getAllUsers);
+  router.post("/create-user", createNewUser);
+  router.put("/update-user/:id", updateUser);
+  router.delete("/delete-user/:id", deleteUser);
+
   return app.use("/api/v1/", router);
 };
 
