@@ -4,6 +4,7 @@ const { getAllProducts, createNewProduct, deleteProduct, updateProduct } = requi
 
 
 const {getAllUsers, createNewUser, updateUser, deleteUser} = require("../controllers/userController");
+const {getCart, addToCart, removeFromCart, updateCartItem }= require("../controllers/cartController");
 
 const router = express.Router();
 
@@ -21,16 +22,19 @@ const router = express.Router();
 // };
 
 const initAPIRoutes = (app) => {
+  // Routes cho giỏ hàng
+  router.get('/cart', getCart);
+  router.post('/cart/add', addToCart);
+  router.put('/cart/update', updateCartItem);
+  router.delete('/cart/remove', removeFromCart);
+
+  // Routes cho sản phẩm
   router.get("/product", getAllProducts);
-  router.post('/product/create',createNewProduct);
-  router.delete('/product/:id',deleteProduct)
-  router.put('/product/edit/:id',updateProduct);
-  // router.post("/create-user", createNewUser);
+  router.post('/product/create', createNewProduct);
+  router.delete('/product/:id', deleteProduct);
+  router.put('/product/edit/:id', updateProduct);
 
-  // router.put("/update-user/:id", updateUser);
-
-  // router.delete("/delete-user/:id", deleteUser);
-
+  // Routes cho người dùng
   router.get("/users", getAllUsers);
   router.post("/create-user", createNewUser);
   router.put("/update-user/:id", updateUser);
