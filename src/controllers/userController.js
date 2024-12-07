@@ -1,113 +1,96 @@
 const connection = require("../config/database");
 
-// Lấy tất cả người dùng
-const getAllUsers = async (req, res) => {
-    try {
-        const [results] = await connection.execute("SELECT * FROM User");
-        return res.status(200).json({
-            message: 'ok',
-            data: results
-        });
-    } catch (error) {
-        console.error("Error fetching User:", error.message);
-        return res.status(500).json({
-            message: 'Error fetching User',
-            error: error.message
-        });
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+const handleRegister = async (req, res) => {
+  const { name, email, password, gender, birthday } = req.body;
+  const role = "customer";
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    // Check if user already exists
+    const [existingUser] = await connection.query(
+      "SELECT * FROM User WHERE email = ?",
+      [email]
+    );
+    if (existingUser.length > 0) {
+      return res.status(400).json({ message: "User already exists" });
     }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Save user to database
+    let [rows, fields] = await connection.query(
+      "INSERT INTO User (name, email, password, gender, birthday, role) VALUES (?, ?, ?, ?, ?, ?)",
+      [name, email, hashedPassword, gender, birthday, role]
+    );
+    console.log(rows);
+    res
+      .status(201)
+      .json({ message: "User registered successfully", data: rows });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred during registration" });
+  }
 };
 
-// Tạo người dùng mới
-const createNewUser = async (req, res) => {
-    try {
-        const { username, password, email } = req.body;
+const handleLogin = async (req, res) => {
+  const { email, password } = req.body;
 
-        if (!username || !password || !email) {
-            return res.status(400).json({
-                message: 'Missing required params'
-            });
-        }
+  if (!email || !password) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
 
-        const [results] = await connection.execute(
-            `INSERT INTO User (username, password, email) VALUES (?, ?, ?)`,
-            [username, password, email]
-        );
-
-        const id = results.insertId;
-        return res.status(201).json({
-            message: 'User created successfully',
-            newUserID: id
-        });
-    } catch (error) {
-        console.error("Error creating user:", error.message);
-        return res.status(500).json({
-            message: 'Error creating user',
-            error: error.message
-        });
+  try {
+    // Find user in database
+    const [user] = await connection.query(
+      "SELECT * FROM User WHERE email = ?",
+      [email]
+    );
+    if (user.length === 0) {
+      return res.status(400).json({ message: "Invalid credentials" });
     }
+
+    const foundUser = user[0];
+
+    // Compare password
+    const isPasswordValid = await bcrypt.compare(password, foundUser.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    const payload = {
+      id: foundUser.id,
+      email: foundUser.email,
+    };
+    // Generate JWT
+    const token = jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRE,
+      }
+    );
+
+    res.status(200).json({
+        message: "Login successful",
+        accessToken: token,
+        email: foundUser.email
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred during login" });
+  }
 };
 
-// Cập nhật thông tin người dùng
-const updateUser = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { username, email } = req.body;
-
-        if (!id) {
-            return res.status(400).json({
-                message: 'Missing required params'
-            });
-        }
-
-        await connection.execute(
-            `UPDATE User SET username = ?, email = ? WHERE user_id = ?`,
-            [username, email, id]
-        );
-
-        return res.status(200).json({
-            message: 'User updated successfully'
-        });
-    } catch (error) {
-        console.error("Error updating user:", error.message);
-        return res.status(500).json({
-            message: 'Error updating user',
-            error: error.message
-        });
-    }
-};
-
-// Xóa người dùng
-const deleteUser = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        if (!id) {
-            return res.status(400).json({
-                message: 'Missing required params'
-            });
-        }
-
-        await connection.execute(
-            `DELETE FROM User WHERE user_id = ?`,
-            [id]
-        );
-
-        return res.status(200).json({
-            message: 'User deleted successfully'
-        });
-    } catch (error) {
-        console.error("Error deleting user:", error.message);
-        return res.status(500).json({
-            message: 'Error deleting user',
-            error: error.message
-        });
-    }
-};
-
-// Xuất các hàm
 module.exports = {
-    getAllUsers,
-    createNewUser,
-    updateUser,
-    deleteUser,
+  handleLogin,
+  handleRegister,
 };
+
+
+
