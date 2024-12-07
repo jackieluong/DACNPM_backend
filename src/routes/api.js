@@ -1,6 +1,7 @@
 const express = require("express");
 
 const { getAllProducts, createNewProduct, deleteProduct, updateProduct } = require("../controllers/productController");
+const { handleLogin, handleRegister } = require("../controllers/userController");
 
 
 
@@ -29,7 +30,8 @@ const initAPIRoutes = (app) => {
   // router.put("/update-user/:id", updateUser);
 
   // router.delete("/delete-user/:id", deleteUser);
-
+  router.post('/login', handleLogin);
+  router.post('/register', handleRegister);
   
   return app.use("/api/v1/", router);
 };
