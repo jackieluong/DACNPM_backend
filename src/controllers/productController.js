@@ -23,6 +23,31 @@ let getAllProducts = async (req, res) => {
 };
 
 
+let getProductByID = async (req, res) => {
+    try {
+        let { id } = req.params;
+
+        // Execute the query to fetch a course by ID
+        const [results, fields] = await connection.execute("SELECT * FROM Product WHERE product_id = ?", [id]);
+
+        // Respond with the fetched course
+        return res.status(200).json({
+            message: 'ok',
+            data: results,
+            description: 'Get product successfully'
+        });
+    } catch (error) {
+        // Handle errors if the query fails
+        console.error("Error fetching product:", error.message);
+        return res.status(500).json({
+            message: 'error',
+            error: error.message
+        });
+    }
+};
+
+
+
 
 let createNewProduct = async (req, res) => {
     try {
