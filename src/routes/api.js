@@ -6,6 +6,7 @@ const { updateOrder, getAllOrders, getOrderDetail } = require("../controllers/or
 const { getAllCustomers } = require("../controllers/customerController");
 
 
+const {getAllUsers, createNewUser, updateUser, deleteUser} = require("../controllers/userController");
 
 const router = express.Router();
 
@@ -28,7 +29,10 @@ const initAPIRoutes = (app) => {
   router.delete('/product/:id',deleteProduct)
   router.put('/product/edit/:id',updateProduct);
 
+
   // User
+
+
   router.post('/login', handleLogin);
   router.post('/register', handleRegister);
   
@@ -45,8 +49,15 @@ const initAPIRoutes = (app) => {
   // Promotion
   
 
+
   // Dashboard
   
+
+//   router.get("/users", getAllUsers);
+//   router.post("/create-user", createNewUser);
+//   router.put("/update-user/:id", updateUser);
+//   router.delete("/delete-user/:id", deleteUser);
+
 
 
   return app.use("/api/v1/", router);
