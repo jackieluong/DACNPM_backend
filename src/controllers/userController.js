@@ -12,7 +12,7 @@ const handleRegister = async (req, res) => {
   try {
     // Check if user already exists
     const [existingUser] = await connection.query(
-      "SELECT * FROM User WHERE email = ?",
+      "SELECT * FROM AppUser WHERE email = ?",
       [email]
     );
     if (existingUser.length > 0) {
@@ -24,7 +24,7 @@ const handleRegister = async (req, res) => {
 
     // Save user to database
     let [rows, fields] = await connection.query(
-      "INSERT INTO User (name, email, password, gender, birthday, role) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO AppUser (name, email, password, gender, birthday, role) VALUES (?, ?, ?, ?, ?, ?)",
       [name, email, hashedPassword, gender, birthday, role]
     );
     console.log(rows);
@@ -47,7 +47,7 @@ const handleLogin = async (req, res) => {
   try {
     // Find user in database
     const [user] = await connection.query(
-      "SELECT * FROM User WHERE email = ?",
+      "SELECT * FROM AppUser WHERE email = ?",
       [email]
     );
     if (user.length === 0) {
