@@ -1,7 +1,6 @@
 const connection = require("../config/database");
 
 
-
 let getAllProducts = async (req, res) => {
     try {
         // Execute the query to fetch all courses
@@ -22,6 +21,8 @@ let getAllProducts = async (req, res) => {
         });
     }
 };
+
+
 
 let createNewProduct = async (req, res) => {
     try {
@@ -57,6 +58,8 @@ let createNewProduct = async (req, res) => {
     }
 };
 
+
+
 let updateProduct = async (req, res) => {
     try {
         let { id } = req.params;
@@ -90,6 +93,8 @@ let updateProduct = async (req, res) => {
         });
     }
 };
+
+
 let deleteProduct = async (req, res) => {
     try {
         let { id } = req.params;

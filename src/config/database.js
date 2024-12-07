@@ -28,7 +28,7 @@ const connection = mysql.createPool({
         console.log('Connected to the database successfully');
         
     } catch (error) {
-        console.error('Error connecting to the database:', error.message);
+        console.error('Error connecting to the database bị loi ne:', error.message);
     }
 }
 
