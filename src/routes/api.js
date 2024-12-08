@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { getAllProducts, createNewProduct, deleteProduct, updateProduct } = require("../controllers/productController");
+const { getAllProducts, createNewProduct, deleteProduct, updateProduct, getProductByID } = require("../controllers/productController");
 const { handleLogin, handleRegister } = require("../controllers/userController");
 const { updateOrder, getAllOrders, getOrderDetail } = require("../controllers/orderController");
 const { getAllCustomers } = require("../controllers/customerController");
@@ -25,6 +25,7 @@ const router = express.Router();
 // urlbase: localhost:8080/api/v1/product
 const initAPIRoutes = (app) => {
   router.get("/product", getAllProducts);
+  router.get("/product/:id", getProductByID);
   router.post('/product/create',createNewProduct);
   router.delete('/product/:id',deleteProduct)
   router.put('/product/edit/:id',updateProduct);
