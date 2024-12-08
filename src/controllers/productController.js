@@ -147,4 +147,5 @@ module.exports = {
     createNewProduct,
     deleteProduct,
     updateProduct,
+    getProductByID
 };
