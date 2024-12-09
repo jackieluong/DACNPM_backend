@@ -1,6 +1,6 @@
 
 INSERT INTO `User` (`name`, `password`, `username`, `role`, `gender`, `birthday`, `email`) VALUES
-('Nguyễn Quốc Hải', 'password101', 'nguyenquochai', 'customer', 'M', '1991-02-02', 'nguyenquochai@email.com'),
+('Nguyễn Quốc Hải', 'password101', 'nguyenquochai', 'customer', 'M', '1991-02-02', 'nguyenquochai@gmail.com'),
 ('Trần Thị Bích', 'password202', 'tranthibich', 'manager', 'F', '1986-06-06', 'tranthibich@example.com'),
 ('Lê Văn An', 'password303', 'levanan', 'customer', 'M', '1993-07-07', 'levanan@example.com'),
 ('Hoàng Minh Tuấn', 'password404', 'hoangminhtuan', 'manager', 'M', '1988-08-08', 'hoangminhtuan@example.com'),
