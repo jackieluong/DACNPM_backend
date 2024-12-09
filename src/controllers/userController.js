@@ -64,8 +64,9 @@ const handleLogin = async (req, res) => {
     }
 
     const payload = {
-      id: foundUser.id,
+      id: foundUser.user_id,
       email: foundUser.email,
+      role: foundUser.role
     };
     // Generate JWT
     const token = jwt.sign(
@@ -79,7 +80,11 @@ const handleLogin = async (req, res) => {
     res.status(200).json({
         message: "Login successful",
         accessToken: token,
-        email: foundUser.email
+        user: {
+            id: foundUser.user_id,
+            email: foundUser.email,
+            role: foundUser.role
+        }
     });
   } catch (error) {
     console.error(error);
