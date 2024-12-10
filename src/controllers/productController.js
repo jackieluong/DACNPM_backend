@@ -25,7 +25,8 @@ let getAllProducts = async (req, res) => {
 
 let getProductByID = async (req, res) => {
     try {
-        let { id } = req.params;
+        console.log(req.params);
+        let {id } = req.params;
 
         // Execute the query to fetch a course by ID
         const [results, fields] = await connection.execute("SELECT * FROM Product WHERE product_id = ?", [id]);
@@ -149,10 +150,46 @@ let deleteProduct = async (req, res) => {
         });
     }
 };
+
+let searchProduct = async (req, res) => {
+    try {
+        console.log("Search keyword:", req.query);
+        let { keyword } = req.query;
+        
+        if (!keyword) {
+            return res.status(400).json({
+                message: 'Missing required params'
+            });
+        }
+
+        keyword = keyword.trim();
+        // Execute the query to delete the course
+        const [results, fields] = await connection.execute(
+            `SELECT * FROM Product WHERE LOWER(name) LIKE ?`,
+            [`%${keyword.toLowerCase()}%`]
+        );
+
+        console.log("Search successfully product with keyword:", keyword);
+        // Respond with a success message
+        return res.status(200).json({
+            message: 'Search successfully',
+            count: results.length,
+            data: results
+        });
+    } catch (error) {
+        // Handle errors if the query fails
+        console.error("Error searching product:", error.message);
+        return res.status(500).json({
+            message: 'Error searching product',
+            error: error.message
+        })
+}
+}
 module.exports = {
     getAllProducts,
     createNewProduct,
     deleteProduct,
     updateProduct,
-    getProductByID
+    getProductByID,
+    searchProduct,
 };
