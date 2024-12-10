@@ -9,17 +9,43 @@ let getAllProducts = async (req, res) => {
         // Respond with the fetched courses
         return res.status(200).json({
             message: 'ok',
-            data: results
+            data: results,
+            description: 'Get product successfully'
         });
     } catch (error) {
         // Handle errors if the query fails
         console.error("Error fetching product:", error.message);
         return res.status(500).json({
-            message: 'Error fetching product',
+            message: 'error',
             error: error.message
         });
     }
 };
+
+
+let getProductByID = async (req, res) => {
+    try {
+        let { id } = req.params;
+
+        // Execute the query to fetch a course by ID
+        const [results, fields] = await connection.execute("SELECT * FROM Product WHERE product_id = ?", [id]);
+
+        // Respond with the fetched course
+        return res.status(200).json({
+            message: 'ok',
+            data: results,
+            description: 'Get product successfully'
+        });
+    } catch (error) {
+        // Handle errors if the query fails
+        console.error("Error fetching product:", error.message);
+        return res.status(500).json({
+            message: 'error',
+            error: error.message
+        });
+    }
+};
+
 
 
 
@@ -41,6 +67,7 @@ let createNewProduct = async (req, res) => {
         );
 
         const id = results.insertId;
+        console.log("Create new product with ID:", id);
         // Respond with a success message
         return res.status(201).json({
             message: 'Product created successfully',
@@ -63,8 +90,8 @@ let updateProduct = async (req, res) => {
         let { id } = req.params;
         let { name, price,brand, description, quantity, category, imgUrl } = req.body;
 
-        console.log(req.body);
-        console.log(id);
+        
+        
         if (!id) {
             return res.status(400).json({
                 message: 'Missing required params'
@@ -77,6 +104,7 @@ let updateProduct = async (req, res) => {
             [name, price,brand, description, quantity, category, imgUrl, id]
         );
 
+        console.log("Update successfully product with ID:", id);
         // Respond with a success message
         return res.status(200).json({
             message: 'Product updated successfully'
@@ -107,6 +135,7 @@ let deleteProduct = async (req, res) => {
             [id]
         );
 
+        console.log("Delete successfully product with ID:", id);
         // Respond with a success message
         return res.status(200).json({
             message: 'Product deleted successfully'
@@ -125,4 +154,5 @@ module.exports = {
     createNewProduct,
     deleteProduct,
     updateProduct,
+    getProductByID
 };
