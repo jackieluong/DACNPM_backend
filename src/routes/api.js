@@ -9,6 +9,7 @@ const auth = require("../middleware/jwtAuth");
 
 
 const {getAllUsers, createNewUser, updateUser, deleteUser} = require("../controllers/userController");
+const { countTotalRevenue, countTotalOrders, countDeliveredOrders, countShippingOrders, getRevenueByMonth, getRevenueByCategory, getRevenueByBrand, getTopSellingProducts } = require("../controllers/dashboardController");
 
 const router = express.Router();
 
@@ -60,7 +61,14 @@ const initAPIRoutes = (app) => {
 
   // Dashboard
   
-
+  router.get('/dashboard/revenue', countTotalRevenue)
+  router.get('/dashboard/orders', countTotalOrders)
+  router.get('/dashboard/orders-delivered', countDeliveredOrders);
+  router.get('/dashboard/orders-shipping', countShippingOrders);
+  router.get('/dashboard/revenue/month', getRevenueByMonth);
+  router.get('/dashboard/revenue/category', getRevenueByCategory);
+  router.get('/dashboard/revenue/brand', getRevenueByBrand);
+  router.get('/dashboard/product/top-selling', getTopSellingProducts);
 //   router.get("/users", getAllUsers);
 //   router.post("/create-user", createNewUser);
 //   router.put("/update-user/:id", updateUser);

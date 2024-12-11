@@ -119,13 +119,7 @@ let addToCart = async (req, res) => {
     let cartID;
     console.log(rows);
     if (rows.length > 0) {
-      // Already have cart record
-      // const [existingProduct] = connection.execute(
-      //     `SELECT quantity
-      //     FROM Consisted, Cart
-      //     WHERE Consisted.cart_id = Cart.cart_id AND Consisted.product_id = ? AND Cart.user_id = ?`,
-      //     [productID, userID]
-      // );
+      
       cartID = rows[0].cart_id;
     } else {
       const [insertCardID] = await connection.execute(
@@ -135,14 +129,7 @@ let addToCart = async (req, res) => {
         [userID, userID]
       );
       cartID = insertCardID.insertId;
-      // No cart record
-
-      // const [existingProduct] = connection.execute(
-      //     `SELECT quantity
-      //     FROM Consisted
-      //     WHERE Consisted.product_id = ? AND Consisted.card_id = ?`,
-      //     [productID, cardID]
-      // );
+   
     }
 
     const [existingProduct] = await connection.execute(

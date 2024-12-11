@@ -15,8 +15,10 @@ const connection = mysql.createPool({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+    connectionLimit: 100,
+    queueLimit: 10,
+    // acquireTimeout: 30000, // Timeout for getting a connection from the pool
+    // timeout: 60000, // Timeout for idle connections
   });
 
   async function testConnection() {
@@ -28,7 +30,7 @@ const connection = mysql.createPool({
         console.log('Connected to the database successfully');
         
     } catch (error) {
-        console.error('Error connecting to the database bị loi ne:', error.message);
+        console.error('Error connecting to the database:', error.message);
     }
 }
 
