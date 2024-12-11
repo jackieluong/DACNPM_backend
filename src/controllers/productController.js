@@ -29,8 +29,31 @@ let getProductByID = async (req, res) => {
         let {id } = req.params;
 
         // Execute the query to fetch a course by ID
-        const [results, fields] = await connection.execute("SELECT * FROM Product WHERE product_id = ?", [id]);
-
+        const [rows, fields] = await connection.execute(`
+            SELECT p.*, f.score, f.content, f.feedback_time, u.name as user_name
+            FROM Product p, ProductFeedback f, AppUser u
+            WHERE p.product_id = f.product_id AND f.user_id = u.user_id AND p.product_id = ?`,
+            
+            [id]);
+        
+            const reviews = rows.map(row => ({
+                user_name: row.user_name,
+                score: row.score,
+                content: row.content,
+                feedback_time: row.feedback_time,
+                
+            }))
+            const results = {
+                product_id: rows[0].product_id,
+                name: rows[0].name,
+                price: rows[0].price,
+                brand: rows[0].brand,
+                description: rows[0].description,
+                quantity: rows[0].quantity,
+                category: rows[0].category,
+                imgUrl: rows[0].imgUrl,
+                reviews
+            }
         // Respond with the fetched course
         return res.status(200).json({
             message: 'ok',
