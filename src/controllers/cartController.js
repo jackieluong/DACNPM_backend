@@ -117,7 +117,7 @@ let addToCart = async (req, res) => {
 
     // console.log("card_id: ", cardID);
     let cartID;
-    console.log(rows);
+    // console.log(rows);
     if (rows.length > 0) {
       
       cartID = rows[0].cart_id;

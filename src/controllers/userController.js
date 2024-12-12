@@ -92,9 +92,22 @@ const handleLogin = async (req, res) => {
   }
 };
 
+
+const getUser = async (req, res) => {
+  const user = req.user;
+  console.log(user);
+  try {
+    
+    res.status(200).json({ message: "User retrieved successfully", data: user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred" });
+  }
+}
 module.exports = {
   handleLogin,
   handleRegister,
+  getUser
 };
 
 

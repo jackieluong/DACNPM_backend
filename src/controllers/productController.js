@@ -25,24 +25,27 @@ let getAllProducts = async (req, res) => {
 
 let getProductByID = async (req, res) => {
     try {
-        console.log(req.params);
+        console.log("Get product by ID:", req.params);
         let {id } = req.params;
-
+        console.log(id);
         // Execute the query to fetch a course by ID
         const [rows, fields] = await connection.execute(`
-            SELECT p.*, f.score, f.content, f.feedback_time, u.name as user_name
-            FROM Product p, ProductFeedback f, AppUser u
-            WHERE p.product_id = f.product_id AND f.user_id = u.user_id AND p.product_id = ?`,
+            SELECT p.*, f.score, f.content, f.feedback_time, u.name AS user_name
+            FROM Product p
+            LEFT JOIN ProductFeedback f ON p.product_id = f.product_id
+            LEFT JOIN AppUser u ON f.user_id = u.user_id
+            WHERE p.product_id = ? `,
             
             [id]);
-        
-            const reviews = rows.map(row => ({
+            
+            
+            const reviews = rows[0].score ? rows.map(row => ({
                 user_name: row.user_name,
                 score: row.score,
                 content: row.content,
                 feedback_time: row.feedback_time,
                 
-            }))
+            })) : [];
             const results = {
                 product_id: rows[0].product_id,
                 name: rows[0].name,
@@ -54,6 +57,8 @@ let getProductByID = async (req, res) => {
                 imgUrl: rows[0].imgUrl,
                 reviews
             }
+
+            
         // Respond with the fetched course
         return res.status(200).json({
             message: 'ok',

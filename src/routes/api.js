@@ -1,7 +1,7 @@
 const express = require("express");
 
 const { getAllProducts, createNewProduct, deleteProduct, updateProduct, getProductByID, searchProduct } = require("../controllers/productController");
-const { handleLogin, handleRegister } = require("../controllers/userController");
+const { handleLogin, handleRegister, getUser } = require("../controllers/userController");
 const { updateOrder, getAllOrders, getOrderDetail } = require("../controllers/orderController");
 const { getAllCustomers } = require("../controllers/customerController");
 const { getCartItems, addToCart, updateQuantity, removeFromCart } = require("../controllers/cartController");
@@ -41,7 +41,7 @@ const initAPIRoutes = (app) => {
 
   router.post('/login', handleLogin);
   router.post('/register', handleRegister);
-  
+  router.get('/user',auth,  getUser);
   // Order
   router.get('/order', getAllOrders);
   router.put('/order/edit/:id', updateOrder);
