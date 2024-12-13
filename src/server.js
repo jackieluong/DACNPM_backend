@@ -18,7 +18,8 @@ const hostname = process.env.HOSTNAME || 'localhost'; // Use HOSTNAME from .env 
 
 // Config req body
 app.use(express.json());
-app.use(express.urlencoded({extend: true}));
+app.use(express.urlencoded({extended: true}));
+
 // Config template engine
 configViewEngine(app);
 
