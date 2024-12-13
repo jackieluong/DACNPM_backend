@@ -13,7 +13,7 @@ const app = express();
 app.use(cors());
 
 const port = process.env.PORT || 8080;
-const hostname = process.env.HOST_NAME;
+const hostname = process.env.HOSTNAME || 'localhost'; // Use HOSTNAME from .env or fallback to localhost
 
 
 // Config req body
