@@ -23,7 +23,7 @@ function auth(req, res, next) {
           email: decoded.email,
           role: decoded.role,
         }
-        console.log("check token: ", token, "\nCheck decoded: ", decoded);
+        // console.log("check token: ", token, "\nCheck decoded: ", decoded);
         // console.log("User:",req.user);
         next();
     } catch (error) {

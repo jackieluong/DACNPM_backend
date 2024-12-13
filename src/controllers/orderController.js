@@ -112,9 +112,181 @@ const getOrderDetail = async (req, res) => {
 };
 
 
+const createOrder = async (req, res) => {
+  const {products, address, payment_method, ship_fee} = req.body;
 
+  const userID = req.user.id;
+  console.log("user with email: ", req.user.email, " request for creating order: ");
+  const order_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+  const status = "Processing";
+  const payment_status = "Not Completed";
+
+  
+  try {
+    const [results, fields] = await connection.execute(
+      "INSERT INTO AppOrder (user_id, order_time, status, payment_status, address, payment_method, ship_fee) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [userID, order_time, status, payment_status, address, payment_method, ship_fee]
+    );
+    const order_id = results.insertId;
+
+
+    await connection.execute(
+      `INSERT INTO Make(order_id, user_id) VALUES (?, ?)`,
+      [order_id, userID]
+    )
+    products.forEach(async (product) => {
+      const [results, fields] = await connection.execute(
+        "INSERT INTO Contain (order_id, product_id, quantity) VALUES (?, ?, ?)",
+        [order_id, product.product.product_id, product.quantity]
+      );
+    });
+
+    return res.status(200).json(
+      {
+        message: "Order created successfully",
+        order_id: order_id
+      }
+    )
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Error creating order",
+      error: error.message,
+    });
+  }
+  
+};
+
+const getOrderDetailByID = async (orderID) => {
+  const [rows] = await connection.execute(
+    `SELECT *, c.quantity as cart_quantity
+    FROM AppOrder o
+    JOIN Contain c ON o.order_id = c.order_id
+    JOIN Product p ON c.product_id = p.product_id
+    WHERE o.order_id = ?`,
+    [52]
+  );
+
+  const products = rows.map((row) => {
+    return {
+      name: row.name,
+      price: row.price,
+      quantity: row.cart_quantity,
+      imgUrl: row.imgUrl,
+    }
+  })
+
+  const result = {
+    order_id: rows[0].order_id,
+    status: rows[0].status,
+    ship_fee: rows[0].ship_fee,
+    products
+  }
+
+  
+
+  return result;
+}
+const getUserOrder = async (req, res) => {
+  const userID = req.user.id;
+  try {
+    
+    const [ordersID] = await connection.execute(
+      "SELECT order_id FROM Make WHERE user_id = ?",
+      [userID]
+    );
+    
+    if(ordersID.length === 0) {
+      return res.status(200).json({
+        message: "ok",
+        data: [],
+        desciption: "No order found"
+      });
+    }
+
+    // let orders_ID = ordersID.map((order) => {
+    //   return order.order_id;
+    // });
+    
+    // console.log("Orders ID: ", orders_ID);
+    // const orders = orders_ID.map((orderID) => {
+    //   return getOrderDetailByID(orderID);
+    // });
+
+    // // const [rows] = await connection.execute(
+    // //   `SELECT *, c.quantity as cart_quantity
+    // //   FROM AppOrder o
+    // //   JOIN Contain c ON o.order_id = c.order_id
+    // //   JOIN Product p ON c.product_id = p.product_id
+    // //   WHERE o.order_id = ?`,
+    // //   [52]
+    // // );
+
+    // let orderIDs = ordersID.map((order) => {
+    //   return order.order_id;
+    // })
+    // console.log("Orders ID: ", orderIDs);
+    const [orderData] = await connection.execute(
+      `SELECT o.order_id, o.status, o.ship_fee,p.product_id, p.name, p.price, p.imgUrl, c.quantity as cart_quantity
+    FROM AppOrder o
+    JOIN Contain c ON o.order_id = c.order_id
+    JOIN Product p ON c.product_id = p.product_id
+    WHERE o.order_id IN (SELECT order_id FROM Make m WHERE user_id = ?)`,
+      [userID]
+    );
+    
+    const orderMap = {};
+    orderData.forEach((order) => {
+      if(!orderMap[order.order_id]){
+        orderMap[order.order_id] = {
+          order_id: order.order_id,
+          status: order.status,
+          ship_fee: order.ship_fee,
+          products: []
+        }
+      }
+      orderMap[order.order_id].products.push({
+        product_id: order.product_id,
+        name: order.name,
+        price: order.price,
+        quantity: order.cart_quantity,
+        imgUrl: order.imgUrl
+      })
+    })
+
+    const rows = Object.values(orderMap);
+    
+    return res.status(200).json({
+      message: "ok",
+      data: rows,
+    });
+// {
+//     "order_id": 52,        
+//     "status": "Processing",
+//     "ship_fee": 20000,
+//     "products": [
+//       {
+//         "name": "Product 1"
+//       }
+//       {
+//         "name": "Product 2"
+//       }
+//     ]
+//     }
+// }
+  } catch (error) {
+    console.error("Error fetching order:", error.message);
+    return res.status(500).json({
+      message: "Error fetching order",
+      error: error.message,
+    });
+  }
+}
 module.exports = {
   getAllOrders,
   updateOrder,
   getOrderDetail,
+  createOrder,
+  getUserOrder,
 };

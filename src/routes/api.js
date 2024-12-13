@@ -1,8 +1,8 @@
 const express = require("express");
 
 const { getAllProducts, createNewProduct, deleteProduct, updateProduct, getProductByID, searchProduct } = require("../controllers/productController");
-const { handleLogin, handleRegister, getUser } = require("../controllers/userController");
-const { updateOrder, getAllOrders, getOrderDetail } = require("../controllers/orderController");
+const { handleLogin, handleRegister, getUser, getUserAccount, updateUserAccount } = require("../controllers/userController");
+const { updateOrder, getAllOrders, getOrderDetail, createOrder, getUserOrder } = require("../controllers/orderController");
 const { getAllCustomers } = require("../controllers/customerController");
 const { getCartItems, addToCart, updateQuantity, removeFromCart } = require("../controllers/cartController");
 const auth = require("../middleware/jwtAuth");
@@ -42,8 +42,12 @@ const initAPIRoutes = (app) => {
   router.post('/login', handleLogin);
   router.post('/register', handleRegister);
   router.get('/user',auth,  getUser);
+  router.get('/user/account', auth, getUserAccount);
+  router.put('/user/account', auth, updateUserAccount);
   // Order
   router.get('/order', getAllOrders);
+  router.get('/order/user', auth, getUserOrder);
+  router.post('/order/create',auth, createOrder);
   router.put('/order/edit/:id', updateOrder);
   router.get('/order/:id', getOrderDetail);
   // Customer

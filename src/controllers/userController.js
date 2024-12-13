@@ -104,10 +104,43 @@ const getUser = async (req, res) => {
     res.status(500).json({ message: "An error occurred" });
   }
 }
+
+const getUserAccount = async (req, res) => {
+  const userID = req.user.id;
+  try {
+    const [results, fields] = await connection.execute(
+      "SELECT name, email, gender, birthday FROM AppUser WHERE user_id = ?",
+      [userID]
+    );
+    res.status(200).json({ message: "User retrieved successfully", data: results });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred" });
+  }
+}
+
+const updateUserAccount = async (req, res) => {
+  const userID = req.user.id;
+  let { name, email, gender, birthday } = req.body;
+
+  birthday = new Date(birthday).toISOString().slice(0, 19).replace('T', ' ');
+  try {
+    const [results, fields] = await connection.execute(
+      " UPDATE AppUser SET name = ?, email = ?, gender = ?, birthday = ? WHERE user_id = ? ",
+      [name, email, gender, birthday, userID]
+    );
+    res.status(200).json({ message: "User updated successfully", data: results });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred" });
+  }
+}
 module.exports = {
   handleLogin,
   handleRegister,
-  getUser
+  getUser,
+  getUserAccount,
+  updateUserAccount
 };
 
 
