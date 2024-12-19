@@ -97,7 +97,7 @@ const getOrderDetail = async (req, res) => {
       products: products
 
     }
-    console.log(results);
+    // console.log(results);
     return res.status(200).json({
       message: "ok",
       data: results,
